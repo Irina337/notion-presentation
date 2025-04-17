@@ -1,0 +1,330 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row =>
+                    row.some(cell => cell !== '' && cell !== null && cell !== undefined)
+                );
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Презентация программного продукта Notion</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.4.0/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.4.0/theme/white.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow: auto;
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+        }
+        .reveal {
+            width: 100%;
+            height: 100vh;
+        }
+        .reveal section {
+            color: #333;
+            background: linear-gradient(145deg, #ffffff, #e6e9f0);
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            box-sizing: border-box;
+            overflow-y: auto;
+            max-height: 85vh;
+            transition: transform 0.5s ease, opacity 0.5s ease;
+        }
+        .reveal section[data-state="current"] {
+            transform: scale(1.02);
+            opacity: 1;
+        }
+        .reveal section:not([data-state="current"]) {
+            opacity: 0.7;
+        }
+        .reveal h1, .reveal h2, .reveal h3 {
+            color: #1a73e8;
+            font-size: 2.8rem;
+            line-height: 1.2;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        .reveal p, .reveal li {
+            font-size: 1.3rem;
+            line-height: 1.6;
+            color: #444;
+        }
+        .reveal .slide-content {
+            text-align: left;
+            padding: 1.5rem;
+            max-width: 90%;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+        .reveal .title-slide {
+            text-align: center;
+            background: linear-gradient(145deg, #e6f0fa, #d1e3ff);
+            border-radius: 15px;
+        }
+        .reveal .navigation a {
+            color: #1a73e8;
+            text-decoration: none;
+            margin: 0 0.5rem;
+            font-size: 1.1rem;
+            padding: 0.3rem 0.8rem;
+            border-radius: 5px;
+            transition: background 0.3s ease;
+        }
+        .reveal .navigation a:hover {
+            background: #e6f0fa;
+            text-decoration: none;
+        }
+        .reveal img {
+            max-width: 60%;
+            max-height: 35vh;
+            height: auto;
+            margin: 1.5rem auto;
+            display: block;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        .reveal img:hover {
+            transform: scale(1.05);
+        }
+        .reveal table {
+            border-collapse: collapse;
+            width: 100%;
+            max-width: 80vw;
+            margin: 1.5rem auto;
+            font-size: 1rem;
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .reveal table, .reveal th, .reveal td {
+            border: 1px solid #ddd;
+            padding: 0.7rem;
+            text-align: center;
+        }
+        .reveal th {
+            background: #1a73e8;
+            color: #fff;
+        }
+        .reveal td {
+            background: #f9f9f9;
+        }
+        .reveal .slide-content p, .reveal .slide-content ul {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.5s forwards;
+        }
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @media screen and (max-width: 768px) {
+            .reveal h1, .reveal h2, .reveal h3 {
+                font-size: 2rem;
+            }
+            .reveal p, .reveal li {
+                font-size: 1rem;
+            }
+            .reveal img {
+                max-width: 80%;
+            }
+            .reveal table {
+                font-size: 0.8rem;
+            }
+            .reveal .slide-content {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <section class="title-slide">
+                <h1>Презентация программного продукта Notion</h1>
+                <p>Наименование образовательного учреждения: ГБПОУ "Технический колледж"</p>
+                <p>Автор: Иванов Иван Иванович</p>
+                <p>Группа: № ПМ-21</p>
+                <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=800&auto=format&fit=crop" alt="Офисная работа">
+            </section>
+
+            <section>
+                <h2>Содержание</h2>
+                <div class="navigation">
+                    <p><a href="#/2">1. Актуальность и цель разработки</a></p>
+                    <p><a href="#/3">2. Задачи проекта</a></p>
+                    <p><a href="#/4">3. Особенности интерфейса</a></p>
+                    <p><a href="#/5">4. Функциональные возможности</a></p>
+                    <p><a href="#/6">5. Применение и преимущества</a></p>
+                    <p><a href="#/7">6. Сравнительная характеристика</a></p>
+                    <p><a href="#/8">7. Результаты использования</a></p>
+                    <p><a href="#/9">8. Заключение</a></p>
+                    <p><a href="#/10">9. Контактные данные</a></p>
+                </div>
+            </section>
+
+            <section>
+                <h2>Актуальность и цель</h2>
+                <div class="slide-content">
+                    <p><strong>Актуальность:</strong> В условиях цифровизации и удаленной работы возросла потребность в универсальных инструментах для организации задач, совместной работы и управления знаниями.</p>
+                    <p><strong>Цель:</strong> Разработка и продвижение Notion как многофункционального программного продукта для повышения эффективности личной и командной работы.</p>
+                </div>
+            </section>
+
+            <section>
+                <h2>Задачи проекта</h2>
+                <div class="slide-content">
+                    <ul>
+                        <li>Создание интуитивно понятного интерфейса для пользователей с разным уровнем подготовки.</li>
+                        <li>Обеспечение интеграции с внешними сервисами (Google Drive, Slack, Trello).</li>
+                        <li>Разработка шаблонов для различных сценариев использования (проекты, заметки, базы данных).</li>
+                        <li>Обеспечение кроссплатформенной доступности (Windows, macOS, iOS, Android, веб).</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section>
+                <h2>Особенности интерфейса</h2>
+                <div class="slide-content">
+                    <p>Notion предлагает минималистичный и гибкий интерфейс:</p>
+                    <ul>
+                        <li>Модульная структура страниц с поддержкой drag-and-drop.</li>
+                        <li>Настраиваемые шаблоны для задач, таблиц и заметок.</li>
+                        <li>Поддержка Markdown для форматирования текста.</li>
+                    </ul>
+                    <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=800&auto=format&fit=crop" alt="Интерфейс Notion">
+                </div>
+            </section>
+
+            <section>
+                <h2>Функциональные возможности</h2>
+                <div class="slide-content">
+                    <ul>
+                        <li>Создание и управление базами данных (таблицы, списки, календари).</li>
+                        <li>Совместная работа в реальном времени с комментариями и уведомлениями.</li>
+                        <li>Интеграция с внешними сервисами через API.</li>
+                        <li>Офлайн-доступ к данным с синхронизацией при подключении.</li>
+                    </ul>
+                    <img src="https://images.unsplash.com/photo-1558655146-d09347e92766?q=80&w=800&auto=format&fit=crop" alt="Совместная работа">
+                </div>
+            </section>
+
+            <section>
+                <h2>Применение и преимущества</h2>
+                <div class="slide-content">
+                    <p><strong>Применение:</strong></p>
+                    <ul>
+                        <li>Управление проектами в командах.</li>
+                        <li>Личная организация (заметки, планирование).</li>
+                        <li>Создание баз знаний для компаний.</li>
+                    </ul>
+                    <p><strong>Преимущества:</strong></p>
+                    <ul>
+                        <li>Универсальность: подходит для студентов, фрилансеров, крупных компаний.</li>
+                        <li>Гибкость: адаптация под любые задачи.</li>
+                        <li>Доступная цена (бесплатный план + премиум от $4/мес).</li>
+                    </ul>
+                    <img src="https://images.unsplash.com/photo-1506784983877-45594f7b7195?q=80&w=800&auto=format&fit=crop" alt="Организация задач">
+                </div>
+            </section>
+
+            <section>
+                <h2>Сравнительная характеристика</h2>
+                <div class="slide-content">
+                    <table>
+                        <tr>
+                            <th>Характеристика</th>
+                            <th>Notion</th>
+                            <th>Trello</th>
+                            <th>Evernote</th>
+                        </tr>
+                        <tr>
+                            <td>Базы данных</td>
+                            <td>Да</td>
+                            <td>Нет</td>
+                            <td>Нет</td>
+                        </tr>
+                        <tr>
+                            <td>Совместная работа</td>
+                            <td>Да</td>
+                            <td>Да</td>
+                            <td>Ограничено</td>
+                        </tr>
+                        <tr>
+                            <td>Гибкость интерфейса</td>
+                            <td>Высокая</td>
+                            <td>Средняя</td>
+                            <td>Низкая</td>
+                        </tr>
+                    </table>
+                </div>
+            </section>
+
+            <section>
+                <h2>Заключение</h2>
+                <div class="slide-content">
+                    <p>Notion — универсальный инструмент, который решает задачи организации, планирования и совместной работы. Благодаря гибкости и функциональности, продукт успешно достигает цели — повышения эффективности пользователей. Программное обеспечение подходит как для индивидуального, так и для командного использования, что делает его востребованным в различных отраслях.</p>
+                    <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=800&auto=format&fit=crop" alt="Командная работа">
+                </div>
+            </section>
+
+            <section>
+                <h2>Контактные данные</h2>
+                <div class="slide-content">
+                    <p>Разработчик: Иванов Иван Иванович</p>
+                    <p>Email: ivanov.ivan@example.com</p>
+                    <p>Телефон: +7 (999) 123-45-67</p>
+                    <p>Сайт: www.example.com</p>
+                </div>
+            </section>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.4.0/reveal.min.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            transition: 'fade',
+            transitionSpeed: 'slow',
+            navigationMode: 'default',
+            width: '100%',
+            height: '100%',
+            margin: 0.1,
+            minScale: 0.2,
+            maxScale: 1.5,
+            center: true,
+            scrollActivation: true
+        });
+    </script>
+</body>
+</html>
